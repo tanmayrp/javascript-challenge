@@ -1,16 +1,47 @@
 // from data.js
 var tableData = data;
 
-// YOUR CODE HERE!
-// Use D3 to select the table body
+// Use D3 to select entities
 var tbody = d3.select("tbody");
-
-// Use D3 to select the table
 var table = d3.select("table");
-
-// Use D3 to set the table class to `table table-striped`
 table.attr("class", "table table-striped");
 
+//list of all filtered items to keep track of
+var filteredList = {};
+
+/////////// LOAD FILTER LIST ////////////////////////////
+function buildFilterList(){
+    filteredList = {};
+
+    var dateTimeElement = d3.select("#datetime");
+    var dateTimeValue = dateTimeElement.property("value");
+    if (dateTimeValue) {
+        filteredList["datetime"] = dateTimeValue;
+    }
+    var cityElement = d3.select("#city");
+    var cityValue = cityElement.property("value");
+    if (cityValue) {
+        filteredList["city"] = cityValue;
+    }
+
+    var stateElement = d3.select("#state");
+    var stateValue = stateElement.property("value");
+    if (stateValue) {
+        filteredList["state"] = stateValue;
+    }
+
+    var countryElement = d3.select("#country");
+    var countryValue = countryElement.property("value");
+    if (countryValue) {
+        filteredList["country"] = countryValue;
+    }
+
+    var shapeElement = d3.select("#shape");
+    var shapeValue = shapeElement.property("value");
+    if (shapeValue) {
+        filteredList["shape"] = shapeValue;
+    }
+}
 
 /////////// DATA LOAD ///////////////////////////////////
 function DeleteRows() {
@@ -38,19 +69,21 @@ var button = d3.select("#filter-btn");
 
 button.on("click", function() {
     console.log("Button clicked");
-    // Select the input element and get the raw HTML node
-    var inputElement = d3.select("#datetime");
-    
-    // Get the value property of the input element
-    var inputValue = inputElement.property("value");
+    var filteredData = tableData;
 
-    var filteredData = tableData.filter(sighting => sighting.datetime === inputValue);
-    console.log(filteredData);
+    //Build filter list to filter on
+    buildFilterList();
+    console.log(filteredList);
+
+    //for reach filtered item in filteredList, filter data appropriately
+    Object.entries(filteredList).forEach(([key, value]) => {
+        filteredData = filteredData.filter(sighting => sighting[key] === value);
+    });
 
     //Delete table so we can display the filtered table. 
     DeleteRows();
 
-    filteredData.forEach((sightings) => {
+    filteredData.forEach((sightings) => { 
         loadData(sightings);
     });
 });
