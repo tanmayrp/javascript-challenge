@@ -77,7 +77,7 @@ button.on("click", function() {
 
     //for reach filtered item in filteredList, filter data appropriately
     Object.entries(filteredList).forEach(([key, value]) => {
-        filteredData = filteredData.filter(sighting => sighting[key] === value);
+        filteredData = filteredData.filter(sighting => sighting[key].toUpperCase() === value.toUpperCase());
     });
 
     //Delete table so we can display the filtered table. 
